@@ -1,0 +1,46 @@
+{
+  "name": "amqp-eventemitter",
+  "version": "0.5.0",
+  "description": "EventEmitter over AMQP",
+  "author": {
+    "name": "Alex Gorbatchev",
+    "email": "alex@goodeggs.com"
+  },
+  "contributors": [
+    {
+      "name": "Aaron Borden",
+      "email": "aaron@goodeggs.com"
+    }
+  ],
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test/*.spec.coffee",
+    "pretest": "./node_modules/.bin/coffee --bare --compile --output ./lib src/*.coffee"
+  },
+  "repository" :
+  {
+    "type" : "git",
+    "url" : "git://github.com/goodeggs/amqp-eventemitter.git"
+  },
+  "licenses" :
+  [
+    {
+      "type" : "MIT"
+    }
+  ],
+  "keywords" : [
+    "amqp",
+    "eventemitter"
+  ],
+  "dependencies": {
+    "amqp": "~0.1.7",
+    "uuid": "~1.4.1"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.6.3",
+    "sinon-chai": "~2.4.0",
+    "chai": "~1.8.1",
+    "sinon": "~1.7.3",
+    "mocha": "~1.14.0",
+    "coffee-errors": "~0.8.4"
+  }
+}
