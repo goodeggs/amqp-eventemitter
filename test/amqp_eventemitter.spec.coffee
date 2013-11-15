@@ -1,4 +1,5 @@
 # use compiled JS file
+uuid = require 'uuid'
 {AmqpEventEmitter} = require '../lib'
 
 require 'coffee-errors'
@@ -22,8 +23,8 @@ describe 'AmqpEventEmitter', ->
       subReady = null
 
       before ->
-        pub = new AmqpEventEmitter url: 'amqp://zmyhvvda:r971AP_cxXkHh0ElrjHVN44h-Lxp3WXD@lemur.cloudamqp.com/zmyhvvda'
-        sub = new AmqpEventEmitter url: 'amqp://zmyhvvda:r971AP_cxXkHh0ElrjHVN44h-Lxp3WXD@lemur.cloudamqp.com/zmyhvvda'
+        pub = new AmqpEventEmitter url: 'amqp://guest:guest@localhost:5672'
+        sub = new AmqpEventEmitter url: 'amqp://guest:guest@localhost:5672'
 
         pub.on 'amqp-eventemitter.ready', pubReady = sinon.spy()
         sub.on 'amqp-eventemitter.ready', subReady = sinon.spy()

@@ -2,7 +2,7 @@
 
 `EventEmitter` over AMQP. YES!
 
-[![Dependency status](https://david-dm.org/goodeggs/amqp-eventemitter.png)](https://david-dm.org/goodeggs/amqp-eventemitter) [![Build Status](https://travis-ci.org/goodeggs/amqp-eventemitter.png)](https://travis-ci.org/goodeggs/amqp-eventemitter)
+[![Dependency status](https://david-dm.org/goodeggs/amqp-eventemitter.png)](https://david-dm.org/goodeggs/amqp-eventemitter)
 
 ## Install
 
@@ -10,7 +10,7 @@
 
 ## Test
 
-Tests connect to locally a test account on [CloudAMQP](http://cloudamqp.com).
+Tests connect to locally running AMQP (such as RabbitMQ, `brew install rabbitmq`).
 
     npm test
 
