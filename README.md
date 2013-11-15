@@ -10,7 +10,7 @@
 
 ## Test
 
-Tests connect to locally running AMQP (such as RabbitMQ, `brew install rabbitmq`).
+Tests connect to locally a test account on [CloudAMQP](http://cloudamqp.com).
 
     npm test
 

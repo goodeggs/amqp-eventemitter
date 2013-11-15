@@ -22,8 +22,8 @@ describe 'AmqpEventEmitter', ->
       subReady = null
 
       before ->
-        pub = new AmqpEventEmitter url: 'amqp://guest:guest@localhost:5672'
-        sub = new AmqpEventEmitter url: 'amqp://guest:guest@localhost:5672'
+        pub = new AmqpEventEmitter url: 'amqp://zmyhvvda:r971AP_cxXkHh0ElrjHVN44h-Lxp3WXD@lemur.cloudamqp.com/zmyhvvda'
+        sub = new AmqpEventEmitter url: 'amqp://zmyhvvda:r971AP_cxXkHh0ElrjHVN44h-Lxp3WXD@lemur.cloudamqp.com/zmyhvvda'
 
         pub.on 'amqp-eventemitter.ready', pubReady = sinon.spy()
         sub.on 'amqp-eventemitter.ready', subReady = sinon.spy()
