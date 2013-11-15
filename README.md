@@ -10,6 +10,8 @@
 
 ## Test
 
+Tests connect to locally running AMQP (such as RabbitMQ, `brew install rabbitmq`).
+
     npm test
 
 ## Usage
