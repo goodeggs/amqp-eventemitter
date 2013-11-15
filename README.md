@@ -38,9 +38,9 @@ pub.emit 'message', 'hello', 'world'
 
 ## Notes
 
-- **Each** instance of `AmqpEventEmitter` receives each emitted event.
+- **Each instance of `AmqpEventEmitter` receives each emitted event.**
 - You can immediately emit events without waiting for AMQP connection.
-- `amqp-eventemitter.ready` is emitted when connection is actually made.
+- `amqp-eventemitter.ready` is emitted when connection is actually made, exchange created and queue bound.
 
 ## License
 
