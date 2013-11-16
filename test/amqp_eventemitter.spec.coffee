@@ -1,6 +1,5 @@
-# use compiled JS file
 uuid = require 'uuid'
-{AmqpEventEmitter} = require '../lib'
+{AmqpEventEmitter} = require '../src'
 
 require 'coffee-errors'
 
@@ -26,8 +25,12 @@ describe 'AmqpEventEmitter', ->
         pub = new AmqpEventEmitter url: 'amqp://guest:guest@localhost:5672'
         sub = new AmqpEventEmitter url: 'amqp://guest:guest@localhost:5672'
 
-        pub.on 'amqp-eventemitter.ready', pubReady = sinon.spy()
-        sub.on 'amqp-eventemitter.ready', subReady = sinon.spy()
+        error = (err) -> throw err
+        pub.queue.on 'error', error
+        sub.queue.on 'error', error
+
+        pub.queue.once 'amqp-eventemitter.ready', pubReady = sinon.spy()
+        sub.queue.once 'amqp-eventemitter.ready', subReady = sinon.spy()
 
       describe 'immediate availability', ->
         it 'can subscribe', ->
@@ -71,3 +74,18 @@ describe 'AmqpEventEmitter', ->
           it 'received all published events', ->
             for index in [1..10]
               expect(receipts[index]).to.equal yes
+
+  describe 'options', ->
+    amqp = null
+
+    before (done) ->
+      amqp = new AmqpEventEmitter
+        connection: url: 'amqp://guest:guest@localhost:5672'
+        exchange: name: 'exchange-name'
+        queue: name: 'queue-name'
+
+      amqp.queue.on 'error', (err) -> throw err
+      amqp.queue.once 'amqp-eventemitter.ready', done
+
+    it 'sets exchange name', -> expect(amqp.queue.exchange.name).to.eql 'exchange-name'
+    it 'sets queue name', -> expect(amqp.queue.queue.name).to.eql 'queue-name'

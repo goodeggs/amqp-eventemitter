@@ -2,45 +2,71 @@ amqp = require 'amqp'
 uuid = require 'uuid'
 {EventEmitter} = require 'events'
 
-class AmqpEventEmitter extends EventEmitter
-  constructor: (@opts) ->
-    super
-
-    @_emit = => EventEmitter::emit.apply @, arguments
-    @ready = no
-    @opts.exchange ?= 'amqp-eventemitter'
-
-    @connection = amqp.createConnection @opts
-
-    @connection.on 'error', @error
-
-    @connection.once 'ready', =>
-      @exchange = @connection.exchange @opts.exchange, type: 'fanout', autoDelete: yes
-      @exchange.on 'error', @error
-
-      @connection.queue "#{opts.exchange}.#{uuid.v4()}", (queue) =>
-        queue.on 'error', @error
-
-        queue.on 'queueBindOk', =>
-          promise = queue.subscribe ({type, args}, headers, deliveryInfo) =>
-            @_emit type, args...
-
-          promise.addErrback @error
-
-          promise.addCallback =>
-            @_emit "#{@opts.exchange}.ready"
-            @ready = yes
-
-        queue.bind @exchange, 'message'
+class AmqpQueue extends EventEmitter
+  constructor: (options) ->
+    @options = JSON.parse JSON.stringify options
 
   error: (err) =>
-    @_emit 'error', err
+    @emit 'error', err
+
+  createConnection: ->
+    options = @options.connection or {}
+    @connection = amqp.createConnection options
+
+    @connection.once 'error', @error
+    @connection.once 'ready', => @emit 'connection.ready'
+
+  createExchange: =>
+    options = @options.exchange ?= {}
+    options.name ?= 'amqp-eventemitter'
+    options.type ?= 'fanout'
+    options.autoDelete ?= yes
+
+    @exchange = @connection.exchange options.name, options
+    @exchange.on 'error', @error
+
+    setImmediate => @emit 'exchange.ready'
+
+  createQueue: =>
+    options = @options.queue ?= {}
+    options.name ?= "#{@options.exchange.name}.#{uuid.v4()}"
+
+    @connection.queue options.name, options, (@queue) =>
+      @queue.on 'error', @error
+      @queue.once 'queueBindOk', => @emit 'queue.ready'
+      @queue.bind @exchange, '#{@options.exchange.name}.event'
+
+  subscribe: =>
+    promise = @queue.subscribe (message, headers, deliveryInfo) =>
+      @emit 'message', message
+
+    promise.addErrback @error
+
+    promise.addCallback =>
+      @emit 'amqp-eventemitter.ready'
+      @ready = yes
+
+  connect: ->
+    @once 'connection.ready', @createExchange
+    @once 'exchange.ready', @createQueue
+    @once 'queue.ready', @subscribe
+
+    @createConnection()
+
+class AmqpEventEmitter extends EventEmitter
+  constructor: (options) ->
+    super
+
+    options = connection: options if options.url?
+    @queue = new AmqpQueue options
+    @queue.connect() unless options.autoConnect is no
+    @queue.on 'message', ({type, args}) => EventEmitter::emit.apply @, [type, args...]
 
   emit: (type, args...) ->
     do wait = =>
-      if @ready
-        @exchange.publish 'message', {type, args}
+      if @queue.ready
+        @queue.exchange.publish 'message', {type, args}
       else
         setImmediate wait
 
-module.exports = {AmqpEventEmitter}
+module.exports = {AmqpEventEmitter, AmqpQueue}

@@ -1,6 +1,6 @@
 # amqp-eventemitter
 
-`EventEmitter` over AMQP. YES!
+EventEmitter over AMQP. YES!
 
 [![Dependency status](https://david-dm.org/goodeggs/amqp-eventemitter.png)](https://david-dm.org/goodeggs/amqp-eventemitter)
 
@@ -32,9 +32,22 @@ pub.emit 'message', 'hello', 'world'
 
 ### new AmqpEventEmitter(options)
 
-`options` are passed directly to [`node-amqp`](https://github.com/postwait/node-amqp) with exception of:
+Options are passed to respective functions in [`node-amqp`](https://github.com/postwait/node-amqp), eg. `options.exchange` is passed to `connection.createExchange` and so on. Here are the default values:
 
-- `exchange` name for the event emitter, which defaults to `amqp-eventemitter`. The exchange name is also used for the `ready` event when AMQP connection is made, as in `[options.exchange].ready`
+    options =
+      connection:
+          url: 'amqp://...'
+      exchange:
+          name: 'amqp-eventemitter'
+          type: 'fanout'
+          autoDelete: true
+      queue:
+          name: exchange.name + '.' + uuid
+
+or you can take a shortcut and just pass AMQP connection string.
+
+    options = url: 'amqp://...'
+
 
 ## Notes
 
